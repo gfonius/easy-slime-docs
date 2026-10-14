@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>簡単スライム化キット β テスター資料</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* 縦一列の説明書。上に言語の切り替えと目次。章ごとに「スクショ → 項目の表」の組。白ベース固定 */
+:root {
+  --bg: #ffffff;
+  --paper: #ffffff;
+  --ink: #16223a;
+  --muted: #56647c;
+  --line: #dde5ef;
+  --slime: #2f74f0;
+  --slime-soft: #eef4fe;
+  --slime-deep: #1a4bb8;
+  --warn: #b5432c;
+  --warn-soft: #fdf3f0;
+  --f-display: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "Yu Gothic", sans-serif;
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+  --f-mono: "JetBrains Mono", "Consolas", ui-monospace, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.85; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-inline: 18px; padding-block: 28px 80px; display: grid; gap: 40px; }
+main { display: grid; gap: 40px; }
+.bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; color: var(--slime); text-transform: uppercase; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; background: var(--paper); padding: 3px; gap: 2px; }
+.lang button { font: 500 13px var(--f-body); color: var(--muted); background: none; border: 0; border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--slime); color: var(--paper); }
+.lang button:focus-visible { outline: 2px solid var(--slime); outline-offset: 2px; }
+header { display: grid; gap: 12px; }
+h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(28px, 5.6vw, 40px); line-height: 1.25; margin: 0; text-wrap: balance; }
+h1 .drop { color: var(--slime); }
+.lede { color: var(--muted); margin: 0; }
+.notice { background: var(--slime-soft); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; }
+nav.toc { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 14px; }
+nav.toc a { color: var(--slime-deep); text-decoration: none; }
+nav.toc a:hover, nav.toc a:focus-visible { text-decoration: underline; outline: none; }
+nav.toc .n { font-family: var(--f-mono); color: var(--muted); font-size: 12px; margin-right: 6px; font-variant-numeric: tabular-nums; }
+section { display: grid; gap: 14px; scroll-margin-top: 16px; }
+.chap { display: flex; gap: 10px; align-items: baseline; border-bottom: 2px solid var(--slime-soft); padding-bottom: 6px; }
+.chap .n { font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--slime); border-radius: 6px; padding: 0 8px; line-height: 1.7; font-variant-numeric: tabular-nums; }
+h2 { font-family: var(--f-display); font-weight: 700; font-size: 23px; margin: 0; text-wrap: balance; }
+h3 { font-family: var(--f-display); font-weight: 700; font-size: 18px; margin: 10px 0 0; scroll-margin-top: 16px; }
+h4 { font-size: 15px; margin: 0; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 1.3em; display: grid; gap: 3px; }
+b { font-weight: 700; }
+.caution { background: var(--warn-soft); border: 1px solid var(--warn); border-radius: 12px; padding: 14px 16px; display: grid; gap: 8px; }
+.caution .h { font-family: var(--f-display); font-weight: 700; font-size: 18px; color: var(--warn); }
+.join { background: var(--slime-soft); border: 1px solid var(--slime); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; }
+.note { font-size: 14px; color: var(--muted); background: var(--slime-soft); border-radius: 10px; padding: 10px 14px; }
+.tablebox { overflow-x: auto; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--line); }
+th { font-weight: 700; font-size: 12.5px; color: var(--muted); background: var(--slime-soft); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 500; min-width: 9em; }
+td.v { font-family: var(--f-mono); font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--slime-soft); color: var(--slime-deep); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+figure { margin: 0; display: grid; gap: 6px; }
+figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+figcaption { font-size: 13px; color: var(--muted); }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 760px) { .pair { grid-template-columns: minmax(0, 1fr); } }
+.pair > * { min-width: 0; }
+.steps { list-style: none; padding: 0; counter-reset: st; display: grid; gap: 10px; }
+.steps > li { counter-increment: st; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.steps > li::before { content: counter(st); font-family: var(--f-mono); font-weight: 600; color: var(--slime-deep); background: var(--slime-soft); border-radius: 8px; height: 26px; display: grid; place-items: center; font-size: 13px; }
+.steps > li > div { min-width: 0; display: grid; gap: 4px; }
+.steps ul { color: var(--muted); font-size: 14.5px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 700px) { .grid3, .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.card .k { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .1em; color: var(--slime); text-transform: uppercase; }
+.card p, .card li { font-size: 14.5px; color: var(--muted); }
+.tpl { position: relative; background: var(--paper); border: 1px solid var(--line); border-radius: 12px; }
+.tpl pre { margin: 0; padding: 14px 16px; padding-right: 96px; font-family: var(--f-mono); font-size: 13px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+.tpl button { position: absolute; top: 10px; right: 10px; font: 500 12.5px var(--f-body); color: var(--slime-deep); background: var(--slime-soft); border: 1px solid transparent; border-radius: 8px; padding: 4px 12px; cursor: pointer; }
+.tpl button:hover, .tpl button:focus-visible { border-color: var(--slime); outline: none; }
+.timeline { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 16px 14px 12px; overflow-x: auto; }
+.tl { min-width: 520px; display: grid; gap: 8px; }
+.tl .row, .tl .axis { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 13px; }
+.tl .track { position: relative; height: 16px; background: var(--slime-soft); border-radius: 6px; }
+.tl .seg { position: absolute; top: 0; bottom: 0; border-radius: 6px; background: var(--slime); }
+.tl .ticks { position: relative; height: 16px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+.tl .ticks span { position: absolute; transform: translateX(-50%); }
+.tl .ticks span:first-child { transform: none; }
+.tl .ticks span:last-child { transform: translateX(-100%); }
+footer { font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 4px; }
+a { color: var(--slime-deep); }
+@media (prefers-reduced-motion: no-preference) { .tpl button { transition: border-color .15s; } }
+.latest { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 16px; align-items: baseline; background: var(--slime-soft); border: 1px solid var(--slime); border-radius: 12px; padding: 12px 16px; font-size: 14.5px; }
+.latest .t { grid-column: 1 / -1; font-family: var(--f-display); font-weight: 700; color: var(--slime-deep); }
+.latest dt { color: var(--muted); font-size: 13px; }
+.latest dd { margin: 0; min-width: 0; overflow-wrap: anywhere; font-family: var(--f-mono); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+ <!-- ======================= 日本語 ======================= -->
+<main id="ja" lang="ja">
+  <dl class="latest" aria-label="最新版">
+    <span class="t">最新版</span>
+    <dt>バージョン</dt><dd id="ver-ja">0.9.0-beta.1 (2026-10-15)</dd>
+    <dt>ダウンロード</dt><dd id="url-ja" style="font-family:var(--f-body)">Discord サーバーでお知らせします</dd>
+  </dl>
+  <header>
+    <h1>簡単スライム化キット<br><span class="drop">β テスター資料</span></h1>
+    <p class="lede">アバターに prefab を 1 つ置いて設定するだけで、メニューから「スライム化」できるキットです。この資料では、参加の要項と、設定画面の見方を画面のスクショで説明します。</p>
+    <div class="notice">
+      <p><b>このツールはベータ版です。</b></p>
+      <p>Claude (AI) を利用して開発しているため、AI に抵抗がある方には申し訳ありませんが、辞退をお願いします。</p>
+    </div>
+  </header>
+
+  <section id="ja-about">
+    <div class="chap"><h2>このキットについて</h2></div>
+    <p>β の目的は、いろいろなアバターで設定だけで正しく動くかを確かめることです。</p>
+    <ul>
+      <li>スライム化すると、胸のコアから半透明のゼリーの体に変わり、垂れ・水たまり・コアが出ます</li>
+      <li>メニューで色・光る・垂れ・水たまりを切り替えられます。「スライムの時は溶けて消える」にした服は、スライムになって溶け落ちます</li>
+      <li>元のアバターは書き換えません。アップロードの時にだけスライム化の処理が入ります (非破壊)</li>
+      <li><b>PC 専用</b> (自作シェーダーのため Quest 非対応)</li>
+    </ul>
+  </section>
+
+  <section id="ja-outline">
+    <div class="chap"><h2>要項</h2></div>
+    <p>下の条件と「<a href="#ja-limits">分かっている制限</a>」を確かめてから参加してください。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>条件</th></tr></thead>
+      <tbody>
+        <tr><td>環境</td><td>PC で VRChat を遊んでいる (デスクトップでも VR でも可)</td></tr>
+        <tr><td>Unity</td><td>VCC (または ALCOM) で作ったアバター用プロジェクト (Unity 2022.3)</td></tr>
+        <tr><td>導入済みのもの</td><td>Modular Avatar (NDMF) と lilToon。アバターの衣装を MA で着せたことがある</td></tr>
+        <tr><td>アバター</td><td>BOOTH 等で販売されている人型のアバター。改変してよいか、各アバターの利用規約を先に確かめてください</td></tr>
+        <tr><td>報告</td><td>「<a href="#ja-check">確認してほしいこと</a>」の結果を 1 回以上送れる</td></tr>
+      </tbody>
+    </table></div>
+    <p>申請の時に書いてほしいこと: アバター名、使っているシェーダー (lilToon の版)、MA・AAO・TexTransTool・FaceEmo など入れているツール</p>
+    <p class="note">子宮のコアは、発売時には別売りの R-18 アドオンに分かれます。テスト版には本体と一緒に入っています。</p>
+    <div class="join">
+      <p><b>こちらの要項に同意できる方のみ、Discord サーバーに参加してください。</b></p>
+      <p>招待リンク: <code>【あとで記入】</code></p>
+    </div>
+  </section>
+
+  <div class="caution">
+    <span class="h">必ずお読みください</span>
+    <p>既存のプロジェクトに影響を与えないように注意は払っておりますが、<b>テスト用のプロジェクトを作成し、そちらで作業してください。</b></p>
+    <p>こちらのツールのテストの際の PC・Unity などのトラブルについて、一切の責任を負いかねます。</p>
+  </div>
+
+  <nav class="toc" aria-label="目次">
+    <a href="#ja-install"><span class="n">1</span>導入の手順</a>
+    <a href="#ja-screen"><span class="n">2</span>設定画面の全体</a>
+    <a href="#ja-prep"><span class="n">3</span>準備 ①〜④</a>
+    <a href="#ja-mask"><span class="n">4</span>顔マスクの選び方</a>
+    <a href="#ja-pref"><span class="n">5</span>好み</a>
+    <a href="#ja-detail"><span class="n">6</span>細かく調整</a>
+    <a href="#ja-tune"><span class="n">7</span>困ったときの設定</a>
+    <a href="#ja-ingame"><span class="n">8</span>ゲーム内</a>
+    <a href="#ja-check"><span class="n">9</span>確認してほしいこと</a>
+    <a href="#ja-answer"><span class="n">10</span>回答と不具合の報告</a>
+    <a href="#ja-limits"><span class="n">11</span>分かっている制限</a>
+    <a href="#ja-promise"><span class="n">12</span>お願いとお約束</a>
+  </nav>
+
+  <section id="ja-install">
+    <div class="chap"><span class="n">1</span><h2>導入の手順</h2></div>
+    <ol class="steps">
+      <li><div><h4>テスト用のプロジェクトを作る</h4><p>普段使っているプロジェクトには入れないでください。アバター用プロジェクトを丸ごと複製しても構いません。</p></div></li>
+      <li><div><h4>複製したプロジェクトに unitypackage をインポートする</h4><p><code>Assets/LeachiToyBox/EasySlime</code> ができます。</p></div></li>
+      <li><div><h4>テスト用にアバターを複製し、blueprint ID を外す</h4><p>普段使いのアバターとは別の ID で、新しくアップロードします。</p></div></li>
+      <li><div><h4><code>EasySlime.prefab</code> をアバターのルートの子に置く</h4><p>シーンのアバターの見た目は変わりません。設定用の部品 (Easy Slime Avatar) が置かれるだけです。</p></div></li>
+      <li><div><h4>prefab のインスペクターで設定する</h4><p>「準備」を上から ✔ にして、必要なら「好み」を選びます。画面の見方は <a href="#ja-screen">2 章</a>から。</p></div></li>
+      <li><div><h4>SDK から<b>プライベートで</b>アップロードする</h4><p>スライム化の処理はアップロードの時に、ビルド用の複製にだけかかります。</p></div></li>
+      <li><div><h4>ゲーム内で Expression メニューの「スライム」を開いて試す</h4></div></li>
+    </ol>
+    <p class="note">やめる時は prefab を消すだけです。</p>
+  </section>
+
+  <section id="ja-screen">
+    <div class="chap"><span class="n">2</span><h2>設定画面の全体</h2></div>
+    <p>prefab を選ぶと、インスペクターに <b>Easy Slime Avatar</b> が出ます。上から <b>準備</b>・<b>好み</b>・<b>細かく調整</b> の 3 段です。ふつうは準備と好みだけで足ります。</p>
+    <figure class="wide"><img src="shots/00_overview.png" alt="Easy Slime Avatar のインスペクター。上に準備のチェックリスト、その下に好み、一番下に折りたたまれた細かく調整" loading="lazy"><figcaption>設定画面 (ゆめかに入れた例)</figcaption></figure>
+    <div class="grid3">
+      <div class="card"><span class="k">準備</span><p>上から順に ✔ にするチェックリスト。✔ は緑、要確認は黄色の「!」、足りない時は赤の「✖」。全部 ✔ ならそのままアップロードできます。</p></div>
+      <div class="card"><span class="k">好み</span><p>色・雰囲気・重さ・コア・メニューの初期値。見た目の方向をまとめて決めます。既定のままでも動きます。</p></div>
+      <div class="card"><span class="k">細かく調整</span><p>好みで決めた中身を 1 項目ずつ変える所。項目にマウスを乗せると説明が出ます。</p></div>
+    </div>
+  </section>
+
+  <section id="ja-prep">
+    <div class="chap"><span class="n">3</span><h2>準備 ①〜④</h2></div>
+    <p>各行の右のボタンを押すと、その下に中身が開きます。もう一度押す (「閉じる」) と閉じます。</p>
+
+    <h3 id="ja-prep1">① 体と顔</h3>
+    <figure class="wide"><img src="shots/01_bodyface.png" alt="① 体と顔を開いた所。体のメッシュ、顔のメッシュ、顔の肌の材質の欄" loading="lazy"><figcaption>「変更」を押した所</figcaption></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>体のメッシュ / 顔のメッシュ</td><td>自動で入ります。違っていたら選び直してください</td></tr>
+        <tr><td>顔の肌の材質</td><td>顔のメッシュの材質のうち、顔の肌が塗られているもの。顔マスクはこの材質で作り、ほかの材質 (赤面・涙などの重ね) は元の絵のまま残します。顔がスライムにならない時はここを確かめてください</td></tr>
+        <tr><td>体と顔が 1 つのメッシュ</td><td>体と顔が分かれていないアバター用。オンにすると「顔の材質」を選ぶ欄が出て、その材質だけを顔、ほかを体として扱います</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="ja-prep2">② 髪と服</h3>
+    <figure class="wide"><img src="shots/02_meshes.png" alt="② 髪と服の一覧。メッシュごとに左が表示、真ん中がスライムにするかそのままか、右が垂れの長さ" loading="lazy"><figcaption>「一覧を開く」を押した所。アバターの中の物が 1 行ずつ並びます</figcaption></figure>
+    <p>名前から髪を自動で振り分けてあります。<b>違う物だけ直してください。</b>一番上の行 (アバター名) で選ぶと、下が全部まとめて変わります。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>欄</th><th>選べるもの</th><th>使いどころ</th></tr></thead>
+      <tbody>
+        <tr><td>左: 表示</td><td>いつも表示 / スライムの時は溶けて消える / スライムの時だけ出す</td><td>スライム化で脱がしたい服は「溶けて消える」。溶け落ちる演出が付きます</td></tr>
+        <tr><td>右: 扱い</td><td>スライムにする/髪・体の一部 (耳・しっぽなど)・小物<br>そのまま/服・服 (上にも垂れる)</td><td>「そのまま/服」の下の体はスライムにならず、スライムは服の縁からあふれます。「上にも垂れる」なら服の上にも液が垂れます</td></tr>
+        <tr><td>垂れの長さ</td><td>短め / 標準 / 長め / とても長い</td><td>「服 (上にも垂れる)」の行だけ。服の上を垂れる長さ</td></tr>
+        <tr><td>服の下とみなす距離 (cm)</td><td>既定 15</td><td>服の下からスライムが漏れるなら上げる。袖口の近くの肌までスライムにならないなら下げる</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">普段は非表示の物は「非表示のメッシュ」にまとめてあります。開くと同じように選べます。</p>
+
+    <h3 id="ja-prep3">③ 顔マスク</h3>
+    <p>顔のどこを元の絵のまま残すかを選びます。くわしくは <a href="#ja-mask">4 章</a>。</p>
+
+    <h3 id="ja-prep4">④ 確認</h3>
+    <p>「シーンでスライムの見た目をプレビュー」を押すと、シーンビューでスライムの見た目になります。もう一度押すと元に戻ります。<b>プレビューには垂れ・水たまり・服の上の垂れは出ません</b> (アップロード・Play では入ります)。</p>
+  </section>
+
+  <section id="ja-mask">
+    <div class="chap"><span class="n">4</span><h2>顔マスクの選び方</h2></div>
+    <p>顔マスクは、目・まつげ・眉・口など<b>元の絵のまま残す部品</b>を決めるものです。どのアバターも最初に自分で選びます。選ぶまでは、顔は元の絵のまま (スライムになりません)。</p>
+    <div class="pair">
+      <figure><img src="shots/03_facemask.png" alt="③ 顔マスクを開いた所。マスク選択の画面を開くボタンと、白黒のマスクの見本" loading="lazy"><figcaption>③ 顔マスクの「選ぶ」を押した所。白 = 残す、黒 = スライム</figcaption></figure>
+      <figure><img src="shots/10_picker.png" alt="顔マスク選択の画面。顔テクスチャの部品が並び、残す部品が赤く塗られている" loading="lazy"><figcaption>マスク選択の画面。赤く見える部品が残る所</figcaption></figure>
+    </div>
+    <ol class="steps">
+      <li><div><h4>「マスク選択の画面を開く」を押す</h4><p>初めて開いた時は「おまかせ」(推測) で選ばれた状態から始まります。</p></div></li>
+      <li><div><h4>部品をクリックして直す</h4><p>クリックで赤くなり、もう一度で戻ります。<b>赤 = 元の絵のまま残る、赤くない所 = スライムになる</b>、暗い所は顔に使われていない所です。マウスを乗せた部品は黄色く光ります。</p>
+        <ul>
+          <li>島になっていないチーク・線は、上の「塗りつぶし」に切り替えて塗ります</li>
+          <li>間違えたら「1 つ前に戻す (Ctrl+Z)」、やり直すなら「おまかせで選ぶ」</li>
+        </ul></div></li>
+      <li><div><h4>「保存してこのマスクを使う」</h4><p><code>Generated/&lt;アバター名&gt;/FacePickMask.png</code> に保存されます。次に開くと続きから直せます。</p></div></li>
+    </ol>
+    <p>自分で作った白黒の画像を使う場合は、③ の「顔マスク」の欄で「自分で作ったマスク画像を使う」を選びます。</p>
+    <div class="card"><span class="k">送ってほしいもの</span>
+      <ul>
+        <li>マスク選択の画面の、<b>開いた直後 (おまかせのまま)</b> のスクショ</li>
+        <li>直して保存した後のスクショ、または <code>FacePickMask.png</code></li>
+        <li>ゲーム内でスライムにした時の顔のスクショ (正面と斜め)</li>
+      </ul>
+      <p>おまかせの外れ方を集めて、推測を直すのに使います。顔のテクスチャそのものは送らなくて大丈夫です。</p>
+    </div>
+  </section>
+
+  <section id="ja-pref">
+    <div class="chap"><span class="n">5</span><h2>好み</h2></div>
+    <p>見た目の方向をまとめて決める所です (<a href="#ja-screen">2 章のスクショ</a>の真ん中)。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>スライムの色</td><td class="v">水色</td><td>スライムになった時の色。ゲーム内メニューの「色」でその場で変えることもできます</td></tr>
+        <tr><td>雰囲気</td><td class="v">おすすめ</td><td>崩れ方・垂れの量・泡などをまとめて決めます。おすすめ / 控えめ (形を保ち、垂れは少なめ) / ドロドロ (よく崩れ、垂れが多い) / 手動。細かく調整で体・垂れ・泡を変えると「手動」になります</td></tr>
+        <tr><td>重さ</td><td class="v">標準</td><td>垂れの本数と細かさ。下に「増えるポリゴン」の目安が出ます。目安 (溶ける服 2 着・コアはハート): 軽い 約 6.5 万 / 標準 約 9.4 万 / 豪華・軽量版 約 17.6 万 / 豪華 約 32.8 万。溶ける服が多いほど増えます</td></tr>
+        <tr><td>コア</td><td class="v">ハート</td><td>体の中に浮かぶ芯。なし / ハート / 球 / 水晶 / 子宮 (下腹部)</td></tr>
+        <tr><td>最初からスライムの状態にする</td><td class="v">オフ</td><td>アバターを着た時からスライム。メニューで肌に戻せます</td></tr>
+        <tr><td>メニューの色の初期値</td><td class="v">0</td><td>ゲーム内メニューの「色」の最初の位置。0 = 上のスライムの色のまま。帯の色がその位置で着た時の色、右の四角が今の値の色です</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="ja-detail">
+    <div class="chap"><span class="n">6</span><h2>細かく調整</h2></div>
+    <p>8 つのまとまりに分かれています。どれも既定のままで動きます。気になる所だけ変えてください。</p>
+
+    <h3>体</h3>
+    <figure><img src="shots/06_d2_body.png" alt="細かく調整の体" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>体の崩れ</td><td class="v">1</td><td>体がどれだけ形を崩して、だれたり膨らんだりするか。0 = 形そのまま / 1 = 標準 / 2 = もっと崩れる</td></tr>
+        <tr><td>細くなる上限 (cm)</td><td class="v">0.4</td><td>崩れで体が元より細くなる量の上限。腕・指が棒のように細くなる時は小さく</td></tr>
+        <tr><td>服・小物の崩れ</td><td class="v">1</td><td>② でスライムにした服・小物の崩れ方。小物はさらに控えめ</td></tr>
+        <tr><td>溶けて垂れる量</td><td class="v">0.7</td><td>体の表面がどれだけ溶けて下へ垂れるか。0 = 垂れない / 1 = たくさん</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>垂れと水たまり</h3>
+    <figure><img src="shots/06_d2_drip.png" alt="細かく調整の垂れと水たまり" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>体から落ちる垂れ</td><td class="v">オン</td><td>体の下向きの所から液が垂れて床まで落ちる。オフにすると作らない (ゲーム内メニューの「垂れ」は作った垂れを出し入れする)。本数 (既定 600、多いほどポリゴンも増える) と太さ (1.35 が標準)</td></tr>
+        <tr><td>体を伝って流れ続ける筋</td><td class="v">オン</td><td>体の表面を、液の筋がゆっくり流れ落ち続ける</td></tr>
+        <tr><td>服の上の垂れが流れ続ける</td><td class="v">オン</td><td>「服 (上にも垂れる)」の服の上の垂れ。オン = 流れ落ち続ける / オフ = 伸びたら止まる</td></tr>
+        <tr><td>足元の水たまり</td><td class="v">オン</td><td>スライムになると足元に水たまりが広がる。ゲーム内メニューでもオンオフできます</td></tr>
+        <tr><td>髪の先から垂れる</td><td class="v">なし</td><td>なし = 髪そのものが溶けたように見える / あり = 毛先が膨らんで、ちぎれた雫が床へ落ちる</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>顔と髪</h3>
+    <figure><img src="shots/06_d2_face.png" alt="細かく調整の顔と髪" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>顔はスライムにしない</td><td class="v">オフ</td><td>オン = 顔は元の絵のまま (首から下だけスライム)。顔マスクも要らなくなります</td></tr>
+        <tr><td>頭を透かさない</td><td class="v">オフ</td><td>オン = 頭の向こうが透けず、首から顎へ少しずつ透けなくなる。頭の中の物が見える時に</td></tr>
+        <tr><td>顔も揺らす (試験中)</td><td class="v">オフ</td><td>顔も体と一緒にぷるぷる揺れる。唇が動いて歯が見えることがあります</td></tr>
+        <tr><td>髪の崩れ</td><td class="v">0</td><td>0 = 髪の形はそのままで質感だけスライム。上げると髪も垂れて崩れます (前髪の長いアバターは目が隠れることがあります)</td></tr>
+        <tr><td>髪の奥を透かす</td><td class="v">オン</td><td>髪がガラスのように透けて、奥の頭や体が見える。オフ = 髪は一様な色</td></tr>
+        <tr><td>体の後ろの髪も透かす</td><td class="v">オフ</td><td>オン = 前から見て、体の後ろの髪が体越しに透ける (胴の色が濃くなりやすい)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>中の泡と、近づいた時</h3>
+    <figure><img src="shots/06_d2_inside.png" alt="細かく調整の中の泡と、近づいた時" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>中の泡 / 泡の量</td><td class="v">オン / 0.12</td><td>スライムの中に小さな泡が浮かんで、ゆっくり昇る。0 = なし、上げるほど泡だらけ</td></tr>
+        <tr><td>近づくとスライムの中の景色になる</td><td class="v">オン</td><td>見ている人のカメラが体に近づくと濃くなり、体の中に入ると視界がスライムで埋まる (泡・揺らめき・歪んだ外)</td></tr>
+        <tr><td>中の濃さ</td><td class="v">0.5</td><td>0 = 外がよく見える / 0.5 = 標準 / 1 = ほとんど外が見えず、締め付けて脈打つ</td></tr>
+        <tr><td>沈み込んだ所がべちゃっとなる</td><td class="v">オン</td><td>ほかの人の体や床がスライムに沈んだ境目に、濃い液の縁とつやを出す。影の出るワールドだけで見えます</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>コア</h3>
+    <figure><img src="shots/06_d2_core.png" alt="細かく調整のコア" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>色</td><td class="v">ピンク</td><td>コアの色</td></tr>
+        <tr><td>外側の濃さ</td><td class="v">0.3</td><td>コアのまわりの薄い膜の濃さ。0 = 芯だけ / 1 = 外側まで濃い</td></tr>
+        <tr><td>大きさ</td><td class="v">1</td><td>1 = 標準</td></tr>
+        <tr><td>位置 上下 / 前後 / 左右 (cm)</td><td class="v">0</td><td>自動で置いた位置からのずれ。+ で上 / 前 (お腹側) / アバターの左</td></tr>
+        <tr><td>中の精液塊</td><td class="v">オン</td><td>コアが「子宮」の時だけ、中に白い塊が浮かぶ</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">好みのコアが「なし」の時は使いません。</p>
+
+    <h3>触ったときの反応</h3>
+    <figure><img src="shots/06_d2_touch.png" alt="細かく調整の触ったときの反応" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>反応する場所の数</td><td class="v">6</td><td>手・指・足・頭が触れると、へこんで盛り上がり波紋が広がる場所の数 (お腹・股・胸・お尻・太もも左右)。多いほど VRChat の Contacts を使います</td></tr>
+        <tr><td>相手の体が入るとへこむ</td><td class="v">オン</td><td>お腹・胸・お尻に相手の体が入ると、その分へこむ (Contacts +3)</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>軽くする (見た目が少し変わる)</h3>
+    <figure><img src="shots/06_d2_light.png" alt="細かく調整の軽くする" loading="lazy"></figure>
+    <div class="tablebox"><table>
+      <thead><tr><th>項目</th><th>既定</th><th>説明</th></tr></thead>
+      <tbody>
+        <tr><td>透け方の計算をまとめる</td><td class="v">オフ</td><td>髪・垂れ・水たまりの透け方を 1 回の計算にまとめて軽くする。体は透けるが、奥の髪や垂れどうしは透けなくなる</td></tr>
+        <tr><td>服の上の垂れ・小物を簡易表示にする</td><td class="v">オフ</td><td>厚みを測らずに描く回数を減らす。少し平たく見える</td></tr>
+        <tr><td>髪の裏側を描かない</td><td class="v">オフ</td><td>髪の裏面を描かずに軽くする。板の髪を裏から見ると消える</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>上級者向け (ふつうは触らなくて大丈夫)</h3>
+    <figure><img src="shots/06_d2_adv.png" alt="細かく調整の上級者向け" loading="lazy"></figure>
+    <ul>
+      <li><b>垂れの形</b>: 落ちる垂れの形 (細い筋 / 雫)、先の膨らみ、ちぎれた雫の大きさ、落ちる速さ、体を伝う筋の太さ、体の表面を流れるつや、服の上の垂れの太さ・速さ</li>
+      <li><b>泡</b>: 泡の大きさ (0.5 が標準)、泡が昇る速さ (cm/秒)</li>
+      <li><b>顔の厚み</b>: 顔も本当の厚みで透ける (目のまわりに枠のような濃い線が出る時はオフ)、顔の厚みの下限</li>
+      <li><b>体の部位ごと</b>: 手・腕・胴・胸・脚・足ごとに、溶け (溶ける強さ)・上限 (元の形からどこまで膨らむか cm)・垂れ (落ちる垂れの量)</li>
+      <li><b>その他</b>: ポリゴン量を「重さ」より細かく選ぶ、糸 (腕と胴など近い所どうしを液の糸で結ぶ)</li>
+    </ul>
+  </section>
+
+  <section id="ja-tune">
+    <div class="chap"><span class="n">7</span><h2>困ったときの設定</h2></div>
+    <div class="tablebox"><table>
+      <thead><tr><th>こうなったら</th><th>ここを変える</th></tr></thead>
+      <tbody>
+        <tr><td>服の下からスライムが漏れる</td><td>② の「服の下とみなす距離」を上げる</td></tr>
+        <tr><td>顔がスライムにならない</td><td>③ の顔マスクを選んで保存したか確かめる。① の「顔の肌の材質」が合っているか</td></tr>
+        <tr><td>目・口までスライムになる</td><td>マスク選択の画面で、その部品をクリックして赤にする</td></tr>
+        <tr><td>前髪が目にかかる</td><td>顔と髪の「髪の崩れ」を下げる (0 なら髪の形はそのまま)</td></tr>
+        <tr><td>胴だけ色が濃く見える</td><td>顔と髪の「体の後ろの髪も透かす」をオフ</td></tr>
+        <tr><td>腕・指が棒のように細くなる</td><td>体の「細くなる上限」を小さくする</td></tr>
+        <tr><td>中に入った時に見えすぎる / 見えなさすぎる</td><td>中の泡と近づいた時の「中の濃さ」</td></tr>
+        <tr><td>頭の中の物 (首の上端・表情の板など) が見える</td><td>顔と髪の「頭を透かさない」をオン</td></tr>
+        <tr><td>目のまわりに枠のような濃い線が出る</td><td>上級者向けの「顔も本当の厚みで透ける」をオフ、または「顔の厚みの下限」を上げる</td></tr>
+        <tr><td>重い</td><td>好みの「重さ」を「軽い」に。さらに「軽くする」の 3 つ</td></tr>
+        <tr><td>形がドロドロすぎる / 物足りない</td><td>好みの「雰囲気」を控えめ・ドロドロに</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="ja-ingame">
+    <div class="chap"><span class="n">8</span><h2>ゲーム内</h2></div>
+    <div class="tablebox"><table>
+      <thead><tr><th>メニュー「スライム」</th><th>種類</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>スライム化</td><td>トグル</td><td>人間 ⇄ スライム</td></tr>
+        <tr><td>色</td><td>ラジアル</td><td>色相を変える。最初の位置は「メニューの色の初期値」</td></tr>
+        <tr><td>光る</td><td>ラジアル</td><td>内側から光る。暗いワールド向け</td></tr>
+        <tr><td>垂れ</td><td>トグル</td><td>体・髪から落ちる垂れと、服の上の垂れ (既定オン)。体の表面を流れる筋は残ります</td></tr>
+        <tr><td>水たまり</td><td>トグル</td><td>立ち止まると床に水たまりが広がる (既定オン)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="timeline" role="img" aria-label="スライム化をオンにしてからの流れ: 0〜4 秒で全身に広がり、4〜7 秒で消える服が溶け落ち、垂れと水たまりは続く">
+      <div class="tl">
+        <div class="row"><span>肌がスライムに広がる</span><div class="track"><div class="seg" style="left:0;width:33%"></div></div></div>
+        <div class="row"><span>消える服が溶け落ちる</span><div class="track"><div class="seg" style="left:33%;width:25%"></div></div></div>
+        <div class="row"><span>垂れ・水たまり</span><div class="track"><div class="seg" style="left:8%;width:92%"></div></div></div>
+        <div class="axis"><span></span><div class="ticks"><span style="left:0">0 秒</span><span style="left:33.3%">4</span><span style="left:58.3%">7</span><span style="left:100%">12 秒〜</span></div></div>
+      </div>
+    </div>
+    <ul>
+      <li>手・指・足・頭が触れるとへこんで波紋が出ます。相手の体が入るともっと深くへこみます</li>
+      <li>視点がめり込むとスライムの中の景色になります</li>
+      <li>オフにすると 2 秒ほどで元の見た目に戻ります</li>
+      <li>増えるもの: 同期パラメータ 19 bit、Contacts 9 個 (既定の設定で)</li>
+    </ul>
+  </section>
+
+  <section id="ja-check">
+    <div class="chap"><span class="n">9</span><h2>確認してほしいこと</h2></div>
+    <p>一番知りたいのは「設定だけで最後まで通るか」と「ゲーム内で崩れて見える所がないか」です。全部でなくて構いません。試せた所だけ報告してください。</p>
+    <div class="grid2">
+      <div class="card"><span class="k">導入</span><ul>
+        <li>prefab を入れて、エラーなくアップロードできた (コンソールに赤いエラーが出たらその内容も)</li>
+        <li>① 体・顔のメッシュが自動で正しく入った</li>
+        <li>② 髪・服の振り分けのおすすめが合っていた</li>
+        <li>③ 顔マスクの「おまかせ」が合っていた / どこを直したか</li>
+        <li>④ プレビューで見た目を確かめられた</li></ul></div>
+      <div class="card"><span class="k">普段の見た目</span><ul>
+        <li>アップロード後も、元のアバターと同じ見た目だった (他の人から見ても)</li></ul></div>
+      <div class="card"><span class="k">スライム化</span><ul>
+        <li>胸のあたりから広がって、全身がスライムになった</li>
+        <li>顔: 目・眉・口が残り、肌がスライムになった。顔の中の部品が透けていない</li>
+        <li>表情 (赤面・涙など) を出しても崩れない</li>
+        <li>髪・服が設定どおり</li>
+        <li>「溶けて消える」にした服が、スライムになって溶け落ちた</li>
+        <li>垂れ・水たまりが床の高さに合っている (座り・寝そべりも)</li>
+        <li>解除したら元の見た目に戻った</li></ul></div>
+      <div class="card"><span class="k">メニュー</span><ul>
+        <li>色 / 光る のラジアルが効く</li>
+        <li>垂れ・水たまりのオンオフ</li>
+        <li>触るとへこむ (自分や他の人の手で)</li></ul></div>
+      <div class="card"><span class="k">ゲーム内の環境</span><ul>
+        <li>明るいワールド・暗いワールドそれぞれでの見え方 (ワールド名も)</li>
+        <li>ミラー・カメラでの見え方</li>
+        <li>重さ: パフォーマンスランク、スライム化した時の FPS の落ち方</li></ul></div>
+      <div class="card"><span class="k">他のツールとの干渉</span><ul>
+        <li>入れているギミック (表情・衣装の切り替えなど) が今までどおり動く</li>
+        <li>TexTransTool のメイク、AAO の最適化と一緒に使える</li></ul></div>
+    </div>
+  </section>
+
+  <section id="ja-answer">
+    <div class="chap"><span class="n">10</span><h2>回答と不具合の報告</h2></div>
+    <h3>回答の書式</h3>
+    <p>下の書式をコピーして Discord サーバーで送ってください。一言でも構いません。</p>
+    <div class="tpl"><button type="button" id="copy-ja-answer" data-copy="tpl-ja-answer">コピー</button><pre id="tpl-ja-answer">【アバター】
+【入れているツール】(AAO / TexTransTool / FaceEmo など)
+【1. 質感・表現】良かった所・物足りない所
+【2. 重さ】パフォーマンスランク、スライム化した時の FPS、「重さ」を変えた前後
+【3. 顔マスク】おまかせはどれくらい合っていたか、どこを直したか (スクショ)
+【4. 出来ると嬉しいこと】
+【5. 分かりづらかった設定】
+【6. ゲーム内のメニューで変えたいもの】
+【7. 不具合】(別に送ったものは「送信済み」で OK)</pre></div>
+    <h3>不具合の報告</h3>
+    <p>気付いた時点で 1 件ずつ送ってください。スクショや短い動画があると原因を見つけやすくなります。「こうだったらいいのに」という要望や、動いたという報告だけでも助かります。</p>
+    <div class="tpl"><button type="button" id="copy-ja-bug" data-copy="tpl-ja-bug">コピー</button><pre id="tpl-ja-bug">【アバター】
+【衣装・髪】(その不具合に関係するもの)
+【入れているツール】MA / AAO / TexTransTool / FaceEmo など (分かれば版も)
+【どこで起きたか】導入中 / アップロード中 / ゲーム内 (ワールド名)
+【何が起きたか】
+【どうなるはずだったか】
+【再現の手順】
+【スクショ・動画】(設定画面のスクショもあると助かります)
+【コンソールのエラー】(あれば、赤い行をコピー)
+【構成の JSON】(添付)</pre></div>
+    <p class="note">構成の JSON は、キットのインスペクターのいちばん下にある「不具合報告用の情報を書き出す (JSON)」で作れます。アバターの構成・キットの設定・キットの版・最近のエラーが 1 つのファイルになります (テクスチャやメッシュの中身、PC のユーザー名は入りません)。</p>
+  </section>
+
+  <section id="ja-limits">
+    <div class="chap"><span class="n">11</span><h2>分かっている制限</h2></div>
+    <p>次の点は把握しています。報告は不要ですが、「ここが特に気になる」という声は歓迎です。</p>
+    <div class="tablebox"><table>
+      <thead><tr><th>制限</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>PC 専用</td><td>Quest・スマホからはフォールバックの見た目になります</td></tr>
+        <tr><td>ゲーム内のシェイプキー</td><td>胸の大きさなどをゲーム内で変える機能には対応していません。垂れ・服の上の垂れはアップロードした時の体型で作られます</td></tr>
+        <tr><td>T ポーズ前提</td><td>アバターの初期姿勢が T ポーズでないと、垂れの位置がずれることがあります</td></tr>
+        <tr><td>lilToon 前提</td><td>元の材質から写す値は lilToon のもの。ほかのシェーダーはテクスチャと色だけです</td></tr>
+        <tr><td>体と顔が 1 つのメッシュ</td><td>対応しましたが、実際の一体型アバターではまだ確かめていません。お持ちの方はぜひ</td></tr>
+        <tr><td>大きい服の垂れ</td><td>T シャツなどは、垂れが肌に接した縁からしか湧かず、本数が少なめです (調整中)</td></tr>
+        <tr><td>暗いワールド</td><td>垂れの先・縁が明るく浮いて見えることがあります</td></tr>
+        <tr><td>頭の中</td><td>表面のすぐ内側では、表情の板がうっすら見えることがあります</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="ja-promise">
+    <div class="chap"><span class="n">12</span><h2>お願いとお約束</h2></div>
+    <h3>お願い</h3>
+    <ul>
+      <li>必ずテスト用のプロジェクトで作業してください</li>
+      <li>配布物の再配布・譲渡はしないでください</li>
+      <li>アップロードはプライベートだけにしてください (パブリックアバターにしない)</li>
+      <li>β 版は予告なく仕様が変わることがあります。更新版をお渡ししたら入れ替えてください</li>
+    </ul>
+    <h3>お約束</h3>
+    <ul>
+      <li>お礼として、製品版を無償でお渡しします (ご希望の方はクレジットにお名前を載せます)。また、今後もし他のツールなどを BOOTH で販売することがあれば、お好きな商品を 1 つギフトします (今のところ販売の予定は未定です)</li>
+      <li>いただいた報告には必ず返事をし、直したものは更新版でお知らせします</li>
+      <li>いただいた情報 (アバター名・スクショなど) は、不具合の修正と動作確認済みの一覧にだけ使います</li>
+    </ul>
+  </section>
+
+  <footer><span>れあちのおもちゃ箱 · 簡単スライム化キット 0.9.0-beta.1 (2026-10-15)</span><span>細心の注意を払って作っていますが、このキットの使用によって生じたいかなる損害・トラブルについても、作者は責任を負いません。</span></footer>
+</main>
+
+</div>
+
+<script>
+(function () {
+  document.querySelectorAll('.tpl button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var pre = document.getElementById(b.dataset.copy);
+      var label = b.textContent, en = false;
+      var done = function (ok) { b.textContent = ok ? (en ? 'Copied' : 'コピーしました') : (en ? 'Selected' : '選択しました'); setTimeout(function () { b.textContent = label; }, 1600); };
+      var sel = function () { var r = document.createRange(); r.selectNodeContents(pre); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); done(false); };
+      try { navigator.clipboard.writeText(pre.textContent).then(function () { done(true); }, sel); } catch (e) { sel(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
